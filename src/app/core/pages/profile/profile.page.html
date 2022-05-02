@@ -1,0 +1,83 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <!-- Menu -->
+    <ion-buttons slot="start">
+      <ion-menu-button menu="first"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Perfil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="information-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="ion-margin-bottom">
+    <ion-card-content class="ion-text-center">
+      <ion-row class="top-40">
+        <ion-col size="12" class="ion-text-center">
+          <img src="assets/avatars/{{user.avatar}}" class="img-avatar" />
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="ion-margin-top">
+        <ion-col size="12">
+          <ion-label class="ion-margin-top" color="soterosport-cream"
+            ><strong>{{user.name}}</strong></ion-label
+          ></ion-col
+        >
+      </ion-row>
+
+      <ion-label color="soterosport-cream">{{user.email}}</ion-label>
+    </ion-card-content>
+  </ion-card>
+
+  <app-avatar-select
+    (avatarSelect)="user.avatar = $event"
+    [currentAvatar]="user.avatar"
+  >
+  </app-avatar-select>
+
+  <form class="top-40" (ngSubmit)="update( formUpdate )" #formUpdate="ngForm">
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item>
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input
+              name="email"
+              type="email"
+              [(ngModel)]="user.email"
+              required
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Nombre</ion-label>
+            <ion-input
+              name="nombre"
+              type="text"
+              [(ngModel)]="user.name"
+              required
+            ></ion-input>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <!-- Este botón dispara el submit => ( ngSubmit ) = "update( formUpdate )" #formUpdate-->
+        <ion-button type="submit" color="primary" expand="block">
+          <ion-icon
+            class="ion-margin-end"
+            name="checkmark-circle-outline"
+          ></ion-icon>
+          Actualizar
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>

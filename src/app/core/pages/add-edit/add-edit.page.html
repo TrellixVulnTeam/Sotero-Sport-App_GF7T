@@ -1,0 +1,362 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="ion-text-center">
+    <ion-buttons slot="end">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-label *ngIf="item.title.length < 1" color="soterosport-cream"
+      >Nuevo ejercicio</ion-label
+    >
+    <ion-label>{{item.title}}</ion-label>
+    <ion-buttons slot="start">
+      <ion-menu-button autoHide="false" menu="first"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center">
+  <ion-card style="margin-top: 30px">
+    <!-- --------------------------------------------------------------------------------------- -->
+    <!-- ------------------------------------ TÍTULO ------------------------------------------- -->
+
+    <form (ngSubmit)="createdItem(formAddEdit)" #formAddEdit="ngForm">
+      <ion-item>
+        <ion-input
+          [(ngModel)]="item.title"
+          name="title"
+          type="text"
+          autocapitalize
+          required
+          clearInput
+          placeholder="Ejercicio"
+        ></ion-input>
+        <ion-icon color="soterosport-blue" slot="end" name="bookmark"></ion-icon>
+      </ion-item>
+
+      <!-- ------------------------------------------------------------------------------------- -->
+      <!-- -------------------------------- DESCRIPCIÓN ---------------------------------------- -->
+
+      <ion-item>
+        <ion-input
+          [(ngModel)]="item.description"
+          name="description"
+          type="text"
+          autocapitalize
+          clearInput
+          required
+          placeholder="Descripción"
+        ></ion-input>
+        <ion-icon
+          color="soterosport-darkcream"
+          slot="end"
+          name="clipboard"
+        ></ion-icon>
+      </ion-item>
+
+      <!-- ------------------------------------------------------------------------------------- -->
+      <!-- -------------------------------- PREPARACIÓN ---------------------------------------- -->
+
+      <ion-item lines="none">
+        <span class="ion-no-margin">Preparación</span>
+      </ion-item>
+      <ion-item>
+        <ion-row>
+          <!-- MINUTOS -->
+          <ion-col size="6">
+            <ion-row>
+              <ion-button (click)="removeTime('preparationMin')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="preparationMin"
+                [ngModelOptions]="{standalone: true}"
+                type="number"
+                disabled
+              ></ion-input
+              ><ion-button (click)="addTime('preparationMin')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button></ion-row
+          ></ion-col>
+
+          <!-- SEGUNDOS -->
+          <ion-col size="6">
+            <ion-row>
+              <ion-button (click)="removeTime('preparationSec')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="preparationSec"
+                [ngModelOptions]="{standalone: true}"
+                type="number"
+                disabled
+              ></ion-input
+              ><ion-button (click)="addTime('preparationSec')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button></ion-row
+          ></ion-col>
+        </ion-row>
+      </ion-item>
+
+      <!-- ------------------------------------------------------------------------------------- -->
+      <!-- ----------------------------------- TIEMPO ------------------------------------------ -->
+
+      <ion-item lines="none">
+        <span class="ion-no-margin">Tiempo</span>
+      </ion-item>
+
+      <ion-item>
+        <ion-row>
+          <!-- MINUTOS -->
+          <ion-col size="6">
+            <ion-row>
+              <ion-button (click)="removeTime('timeMin')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="timeMin"
+                [ngModelOptions]="{standalone: true}"
+                type="number"
+                disabled
+              ></ion-input
+              ><ion-button (click)="addTime('timeMin')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button></ion-row
+          ></ion-col>
+
+          <!-- SEGUNDOS -->
+          <ion-col size="6">
+            <ion-row>
+              <ion-button (click)="removeTime('timeSec')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="timeSec"
+                [ngModelOptions]="{standalone: true}"
+                type="number"
+                disabled
+              ></ion-input
+              ><ion-button (click)="addTime('timeSec')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button></ion-row
+          ></ion-col>
+        </ion-row>
+      </ion-item>
+
+      <!-- ------------------------------------------------------------------------------------- -->
+      <!-- --------------------------------- REPETICIONES -------------------------------------- -->
+
+      <ion-row>
+        <ion-col size="6">
+          <!-- Título -->
+          <ion-item lines="none">
+            <span class="ion-no-margin">Repeticiones</span>
+          </ion-item>
+          <!-- Input -->
+          <ion-item>
+            <ion-row>
+              <ion-button (click)="removeTime('repeats')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="item.repeats"
+                name="repeats"
+                type="number"
+                disabled
+              >
+              </ion-input
+              ><ion-button (click)="addTime('repeats')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button
+            ></ion-row>
+          </ion-item>
+        </ion-col>
+
+        <!-- --------------------------------------------------------------------------------- -->
+        <!-- ----------------------------------- SERIES -------------------------------------- -->
+
+        <ion-col size="6">
+          <!-- Título -->
+          <ion-item lines="none">
+            <span>Series</span>
+          </ion-item>
+          <!-- Input -->
+          <ion-item>
+            <ion-row>
+              <ion-button (click)="removeTime('sets')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="item.sets"
+                name="sets"
+                type="number"
+                disabled
+              >
+              </ion-input
+              ><ion-button (click)="addTime('sets')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button
+            ></ion-row>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <!-- ------------------------------------------------------------------------------------- -->
+      <!-- -------------------------------- DESCANSO REPETICIONES ------------------------------ -->
+
+      <ion-item lines="none">
+        <span class="ion-no-margin">Descanso repeticiones</span>
+      </ion-item>
+
+      <ion-item>
+        <ion-row>
+          <!-- MINUTOS -->
+          <ion-col size="6">
+            <ion-row>
+              <ion-button (click)="removeTime('restRepsMin')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="restRepsMin"
+                [ngModelOptions]="{standalone: true}"
+                type="number"
+                disabled
+              ></ion-input
+              ><ion-button (click)="addTime('restRepsMin')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button></ion-row
+          ></ion-col>
+
+          <!-- SEGUNDOS -->
+          <ion-col size="6">
+            <ion-row>
+              <ion-button (click)="removeTime('restRepsSec')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="restRepsSec"
+                [ngModelOptions]="{standalone: true}"
+                type="number"
+                disabled
+              ></ion-input
+              ><ion-button (click)="addTime('restRepsSec')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button></ion-row
+          ></ion-col>
+        </ion-row>
+      </ion-item>
+
+      <!-- ------------------------------------------------------------------------------------- -->
+      <!-- --------------------------------DESCANSO SERIES ------------------------------------- -->
+
+      <ion-item lines="none">
+        <span class="ion-no-margin">Descanso series</span>
+      </ion-item>
+
+      <ion-item>
+        <ion-row>
+          <!-- MINUTOS -->
+          <ion-col size="6">
+            <ion-row>
+              <ion-button (click)="removeTime('restSetsMin')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="restSetsMin"
+                [ngModelOptions]="{standalone: true}"
+                type="number"
+                disabled
+              ></ion-input
+              ><ion-button (click)="addTime('restSetsMin')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button></ion-row
+          ></ion-col>
+
+          <!-- SEGUNDOS -->
+          <ion-col size="6">
+            <ion-row>
+              <ion-button (click)="removeTime('restSetsSec')" fill="outline">
+                <ion-icon name="remove-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+              <ion-input
+                class="ion-text-center"
+                [(ngModel)]="restSetsSec"
+                [ngModelOptions]="{standalone: true}"
+                type="number"
+                disabled
+              ></ion-input
+              ><ion-button (click)="addTime('restSetsSec')" fill="outline">
+                <ion-icon
+                  name="add-outline"
+                  slot="icon-only"
+                ></ion-icon> </ion-button></ion-row
+          ></ion-col>
+        </ion-row>
+      </ion-item>
+
+      <!-- ------------------------------------------------------------------------------------- -->
+      <!-- ------------------------------------ BOTONES ---------------------------------------- -->
+
+      <!-- Botón guardar -->
+      <ion-button
+        *ngIf="buttonStatus === 'create'"
+        type="submit"
+        [disabled]="
+        (item.title.length &&
+        item.description.length &&
+        (preparationMin || preparationSec) &&
+        (restSetsMin || restSetsSec) &&
+        (restRepsMin || restRepsSec) &&
+        (timeMin || timeSec) &&
+        item.sets &&
+        item.repeats ) < 1"
+        class="ion-margin"
+        color="soterosport-yellow"
+        expand="block"
+      >
+        <ion-icon slot="end" name="folder-open"></ion-icon>
+        Guardar
+      </ion-button>
+
+      <ion-button
+        *ngIf="buttonStatus === 'update'"
+        type="submit"
+        [disabled]="item.title.length < 1"
+        class="ion-margin"
+        color="soterosport-yellow"
+        expand="block"
+      >
+        <ion-icon slot="end" name="folder-open"></ion-icon>
+        Actualizar
+      </ion-button>
+    </form>
+  </ion-card>
+</ion-content>
+
+<!-- Footer con los botones -->
+<ion-footer class="ion-text-center"> </ion-footer>

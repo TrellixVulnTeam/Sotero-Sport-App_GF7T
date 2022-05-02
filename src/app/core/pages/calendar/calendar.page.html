@@ -1,0 +1,111 @@
+<ion-header class="ion-no-border">
+    <ion-toolbar>
+        <!-- Menu -->
+        <ion-buttons slot="start">
+            <ion-menu-button autoHide="false" menu="first"></ion-menu-button>
+        </ion-buttons>
+        <!-- Título -->
+        <ion-title class="ion-text-center"> Calendario </ion-title>
+        <ion-buttons slot="end">
+            <ion-button>
+                <ion-icon name="information-circle-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div *ngIf="showAddEvent">
+        <ion-card class="ion-padding">
+            <ion-item-divider class="ion-padding-end">
+                <h6>Nuevo entrenamiento</h6>
+                <ion-button fill="outline" (click)="showHideForm()" color="soterosport-red" slot="end" size="small">
+                    <ion-icon slot="icon-only" color="soterosport-red" name="close" size="small"></ion-icon>
+                </ion-button>
+            </ion-item-divider>
+
+            <ion-item>
+                <ion-input type="text" placeholder="Título" autocapitalize [(ngModel)]="newEvent.title"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-input type="text" placeholder="Descripción" autocapitalize [(ngModel)]="newEvent.description"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-label><b>Inicio</b></ion-label>
+                <ion-datetime doneText="OK" cancelText="Cancelar" i18n displayFormat="DD/MM/YYYY | HH:mm" pickerFormat="MMM D HH:mm" [(ngModel)]="newEvent.startTime" [min]="minDate"></ion-datetime>
+            </ion-item>
+            <ion-item>
+                <ion-label><b>Fin</b></ion-label>
+                <ion-datetime doneText="OK" cancelText="Cancelar" displayFormat="DD/MM/YYYY | HH:mm" pickerFormat="MMM D HH:mm" [(ngModel)]="newEvent.endTime" [min]="minDate"></ion-datetime>
+            </ion-item>
+
+            <ion-button class="ion-padding" (click)="addEvent()" expand="block" color="primary" [disabled]="(newEvent.title.length && newEvent.description.length) < 1">
+                <ion-icon class="ion-margin-end" name="folder-outline"></ion-icon>
+                Guardar
+            </ion-button>
+        </ion-card>
+    </div>
+
+    <div *ngIf="!showAddEvent">
+        <ion-segment [(ngModel)]="calendar.mode">
+            <ion-segment-button value="month">
+                <ion-label>Mes</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="week">
+                <ion-label>Semana</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="day">
+                <ion-label>Dia</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+    </div>
+
+    <ion-row>
+        <ion-col size="12" class="ion-text-center">
+            <h2>{{ currentMonth }}</h2>
+        </ion-col>
+    </ion-row>
+
+
+    <calendar id="myCal" [eventSource]="allEvents" [calendarMode]="calendar.mode" [currentDate]="calendar.currentDate" (onEventSelected)="onEventSelected($event)" (onTitleChanged)="onViewTitleChanged($event)" (onTimeSelected)="onTimeSelected($event)" [step]="calendar.step"
+        [monthviewDisplayEventTemplate]="template" [monthviewEventDetailTemplate]="templateItem">
+    </calendar>
+
+    <ng-template #template let-view="view" let-row="row" let-col="col">
+        <div [class.with-event]="view.dates[row*7+col].events.length">
+            {{view.dates[row*7+col].label}}
+
+            <div class="indicator-container">
+                <div class="event-indicator" *ngFor="let e of view.dates[row*7+col].events"></div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #templateItem let-selectedDate="selectedDate.events" let-noEventsLabel="noEventsLabel">
+        <hr class="solid" />
+        <ion-item-divider>
+            <h6><strong>Entrenamientos</strong></h6>
+        </ion-item-divider>
+
+        <ion-item *ngIf="selectedDate.length === 0">
+            <p color="medium">Sin entrenamientos para este día</p>
+        </ion-item>
+        <ion-list *ngIf="selectedDate.length > 0" style="margin-left: 10px">
+            <ion-item detail *ngFor="let event of selectedDate" (click)="onEventSelected(event)">
+                <ion-label>{{event.title}}
+                    <p>
+                        {{event.startTime|date: 'HH:mm' }} - {{event.endTime|date: 'HH:mm' }}
+                    </p>
+                </ion-label>
+            </ion-item>
+        </ion-list>
+    </ng-template>
+
+    <!-- Fab button -->
+    <ion-fab *ngIf="!showAddEvent" vertical="bottom" horizontal="center" slot="fixed">
+        <ion-fab-button color="soterosport-darkyellow" (click)="showHideForm()">
+            <ion-icon color="soterosport-cream" size="large" name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>
