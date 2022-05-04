@@ -7,7 +7,7 @@ import { CalendarService } from 'src/app/shared/services/calendar.service';
 import { UiService } from 'src/app/shared/services/ui.service';
 import { EventPage } from '../../modals/event-info/event.page';
 import { IEvent } from '../../../shared/interfaces/interfaces';
-import { ThisReceiver } from '@angular/compiler';
+
 
 @Component({
   selector: 'app-calendar',
