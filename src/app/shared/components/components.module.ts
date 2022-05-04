@@ -5,19 +5,18 @@ import { PipesModule } from '../pipes/pipes.module';
 import { AvatarSelectComponent } from './avatar-select/avatar-select.component';
 import { MenuComponent } from './_menu/menu.component';
 import { RouterModule } from '@angular/router';
-import { ConfigPopoverComponent } from './config-popover/config-popover.component';
 
 
 @NgModule({
   declarations: [
     AvatarSelectComponent,
     MenuComponent,
-    ConfigPopoverComponent
+    
   ],
   exports: [
     AvatarSelectComponent,
     MenuComponent,
-    ConfigPopoverComponent
+    
   ],
   imports: [
     CommonModule,
