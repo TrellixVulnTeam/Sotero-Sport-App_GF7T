@@ -17,7 +17,7 @@ const routes: Routes = [
     canLoad: [UserGuard]
   },
 
-  // Añadir items
+  // Añadir listas
   {
     path: 'add/:listId',
     loadChildren: () => import('./core/pages/add-edit/add-edit.module').then((m) => m.AddEditPageModule),
@@ -48,7 +48,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
+    RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'}),
   ],
   exports: [RouterModule],
 })

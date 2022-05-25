@@ -1,4 +1,16 @@
 (function () {
+  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+  function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+  function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+  function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+  function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
@@ -112,29 +124,366 @@
       /* harmony import */
 
 
-      var _capacitor_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+      var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+      /*! @angular/router */
+      "tyNb");
+      /* harmony import */
+
+
+      var _shared_services_items_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(
+      /*! ../../../shared/services/items.service */
+      "V8OY");
+      /* harmony import */
+
+
+      var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(
+      /*! rxjs */
+      "qCKp");
+      /* harmony import */
+
+
+      var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
+      /*! @ionic/angular */
+      "TEn/");
+      /* harmony import */
+
+
+      var _modals_timer_end_timer_end_page__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
+      /*! ../../modals/timer-end/timer-end.page */
+      "iDyF");
+      /* harmony import */
+
+
+      var _capacitor_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(
       /*! @capacitor/core */
       "gcOT");
 
-      var App = _capacitor_core__WEBPACK_IMPORTED_MODULE_4__["Plugins"].App;
+      var App = _capacitor_core__WEBPACK_IMPORTED_MODULE_9__["Plugins"].App;
       var circleR = 80;
       var circleDasharray = 2 * Math.PI * circleR;
 
       var TimerPage = /*#__PURE__*/function () {
-        function TimerPage() {
+        function TimerPage(popoverCtrl, itemsService, modalCtrl, actvRoute, platform) {
           _classCallCheck(this, TimerPage);
+
+          this.popoverCtrl = popoverCtrl;
+          this.itemsService = itemsService;
+          this.modalCtrl = modalCtrl;
+          this.actvRoute = actvRoute;
+          this.platform = platform;
+          this.item = {
+            title: '',
+            description: '',
+            preparation: null,
+            sets: null,
+            time: null,
+            restSets: null,
+            repeats: null,
+            restReps: null,
+            totalTime: null
+          };
+          this.itemArray = [];
+          this.percent = new rxjs__WEBPACK_IMPORTED_MODULE_6__["BehaviorSubject"](100);
+          this.time = new rxjs__WEBPACK_IMPORTED_MODULE_6__["BehaviorSubject"]('00:00');
+          this.state = 'stop';
+          this.circleDasharray = circleDasharray;
+          this.circleR = circleR;
+          this.audio = new Audio();
+          this.displayStage = 'Preparación';
+          this.onlyDigits = false;
+          this.noFeatures = false;
+          this.mute = false;
+          this.startDuration = 1;
+          this.counterPreparation = 1;
         }
 
         _createClass(TimerPage, [{
           key: "ngOnInit",
-          value: function ngOnInit() {}
+          value: function ngOnInit() {
+            var _this = this;
+
+            this.itemId = this.actvRoute.snapshot.paramMap.get('itemId');
+            console.log(this.itemId + ' Entrando al timer ');
+            this.itemsService.getItemById(this.itemId).subscribe(function (resp) {
+              var _this$itemArray;
+
+              // Lo añado a un array por si hay retraso en la respuesta
+              (_this$itemArray = _this.itemArray).push.apply(_this$itemArray, _toConsumableArray(resp.items));
+
+              var load = _this.item = _this.itemArray[0];
+
+              if (load) {
+                _this.updateCountersAndDuration();
+              }
+            });
+          }
+        }, {
+          key: "ngOnDestroy",
+          value: function ngOnDestroy() {
+            clearInterval(this.interval);
+            this.time.next('00:00');
+            this.updateCountersAndDuration();
+          }
+        }, {
+          key: "updateCountersAndDuration",
+          value: function updateCountersAndDuration() {
+            // Duration
+            this.preparation = this.item.preparation;
+            this.timeEx = this.item.time;
+            this.restReps = this.item.restReps;
+            this.restSets = this.item.restSets; // Counters
+
+            this.counterSets = this.item.sets;
+            this.counterTimeEx = this.item.repeats * this.counterSets;
+            this.counterRestReps = this.item.repeats - 1;
+          } // Actualiza la duración
+
+        }, {
+          key: "updateTimeDisplay",
+          value: function updateTimeDisplay(durationPercent) {
+            var minutes = this.timer / 60;
+            var seconds = this.timer % 60;
+            minutes = String('0' + Math.floor(minutes)).slice(-2);
+            seconds = String('0' + Math.floor(seconds)).slice(-2);
+            var text = minutes + ':' + seconds;
+            this.time.next(text);
+            var totalTime = this.startDuration * durationPercent;
+            var percentage = (totalTime - this.timer) / totalTime * 100;
+            this.percent.next(percentage);
+          } // Preparación ------------------------------------------------------------------
+
+        }, {
+          key: "startPreparation",
+          value: function startPreparation(duration) {
+            var _this2 = this;
+
+            this.displayColor = 'restOut';
+            console.log('Entramos en preparación');
+            this.displayStage = 'Preparación';
+            this.state = 'start';
+            clearInterval(this.interval);
+            this.timer = duration;
+            this.durationPreparation();
+            this.interval = setInterval(function () {
+              _this2.durationPreparation();
+            }, 1000);
+          }
+        }, {
+          key: "durationPreparation",
+          value: function durationPreparation() {
+            this.updateTimeDisplay(this.preparation);
+            --this.timer;
+
+            if (this.timer < 2 && this.timer >= -1) {
+              this.playAudio("../../assets/audio/audio02.wav");
+            }
+
+            if (this.timer < -1) {
+              this.playAudio("../../assets/audio/audio04.wav");
+            } //_________________________________________
+
+
+            if (this.timer < -1) {
+              this.startExercise(this.timeEx);
+            }
+          } // -------------------------------------------------------------------------------
+          // Ejercicio ---------------------------------------------------------------------
+
+        }, {
+          key: "startExercise",
+          value: function startExercise(duration) {
+            var _this3 = this;
+
+            console.log('Entramos en Ejercicio');
+            this.displayColor = 'Rest';
+            this.state = 'start';
+            this.displayStage = 'Ejercicio';
+            clearInterval(this.interval);
+            this.timer = duration;
+            this.durationExercise();
+            this.interval = setInterval(function () {
+              _this3.durationExercise();
+            }, 1000);
+          }
+        }, {
+          key: "durationExercise",
+          value: function durationExercise() {
+            this.updateTimeDisplay(this.timeEx);
+            --this.timer;
+
+            if (this.timer < 2 && this.timer >= -1) {
+              this.playAudio("../../assets/audio/audio02.wav");
+            }
+
+            if (this.timer < -1) {
+              this.playAudio("../../assets/audio/audio05.wav");
+            }
+
+            if (this.timer < -1) {
+              this.counterTimeEx--;
+              this.startRestReps(this.restReps);
+
+              if (this.counterTimeEx === this.counterSets) {
+                this.startRestSets(this.restSets); // Empieza el descanso entre Series
+
+                if (this.counterSets === 1) {
+                  this.stopTimer();
+                  this.updateCountersAndDuration();
+                  this.modalEnd();
+                }
+              }
+            }
+          } // -------------------------------------------------------------------------------
+          // Descanso Repeticion -----------------------------------------------------------
+
+        }, {
+          key: "startRestReps",
+          value: function startRestReps(duration) {
+            var _this4 = this;
+
+            console.log('Entramos en descanso repeticiones');
+            this.displayColor = 'Ex';
+            this.state = 'start';
+            this.displayStage = 'Descanso';
+            clearInterval(this.interval);
+            this.timer = duration;
+            this.durationRestReps();
+            this.interval = setInterval(function () {
+              _this4.durationRestReps();
+            }, 1000);
+          }
+        }, {
+          key: "durationRestReps",
+          value: function durationRestReps() {
+            this.updateTimeDisplay(this.restReps);
+            --this.timer;
+
+            if (this.timer < 2 && this.timer >= -1) {
+              this.playAudio("../../assets/audio/audio02.wav");
+            }
+
+            if (this.timer < -1) {
+              this.playAudio("../../assets/audio/audio04.wav");
+            }
+
+            if (this.timer < -1) {
+              this.counterRestReps--;
+              this.startExercise(this.timeEx);
+            }
+          } // --------------------------------------------------------------------------------
+          // Descanso Series ----------------------------------------------------------------
+
+        }, {
+          key: "startRestSets",
+          value: function startRestSets(duration) {
+            var _this5 = this;
+
+            console.log('Entramos en descanso series');
+            this.displayColor = 'restOut';
+            this.state = 'start';
+            this.displayStage = 'Descanso Serie';
+            clearInterval(this.interval);
+            this.timer = duration;
+            this.durationRestSets();
+            this.interval = setInterval(function () {
+              _this5.durationRestSets();
+            }, 1000);
+          }
+        }, {
+          key: "durationRestSets",
+          value: function durationRestSets() {
+            this.updateTimeDisplay(this.restSets);
+            --this.timer;
+
+            if (this.timer < 2 && this.timer >= -1) {
+              this.playAudio("../../assets/audio/audio02.wav");
+            }
+
+            if (this.timer < -1) {
+              this.playAudio("../../assets/audio/audio04.wav");
+            }
+
+            if (this.timer < -1) {
+              this.counterSets--;
+              this.counterTimeEx++;
+              this.startExercise(this.timeEx);
+            }
+          } // --------------------------------------------------------------------------------
+          // Muestra el modal de final del ejercicio
+
+        }, {
+          key: "modalEnd",
+          value: function modalEnd() {
+            return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+              var modal;
+              return regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      _context.next = 2;
+                      return this.modalCtrl.create({
+                        cssClass: 'modal-end',
+                        component: _modals_timer_end_timer_end_page__WEBPACK_IMPORTED_MODULE_8__["TimerEndPage"]
+                      });
+
+                    case 2:
+                      modal = _context.sent;
+                      _context.next = 5;
+                      return modal.present();
+
+                    case 5:
+                      return _context.abrupt("return", _context.sent);
+
+                    case 6:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, _callee, this);
+            }));
+          } // Play audio
+
+        }, {
+          key: "playAudio",
+          value: function playAudio(url) {
+            var audio = new Audio();
+            audio.src = url;
+            audio.load();
+            audio.play();
+          } // Porcentage
+
+        }, {
+          key: "percentageOffset",
+          value: function percentageOffset(percent) {
+            var percentFloat = percent / 100;
+            return circleDasharray * (1 - percentFloat);
+          } // Stop timer
+
+        }, {
+          key: "stopTimer",
+          value: function stopTimer() {
+            clearInterval(this.interval);
+            this.time.next('00:00');
+            this.updateCountersAndDuration();
+            this.state = 'stop';
+          }
         }]);
 
         return TimerPage;
       }();
 
       TimerPage.ctorParameters = function () {
-        return [];
+        return [{
+          type: _ionic_angular__WEBPACK_IMPORTED_MODULE_7__["PopoverController"]
+        }, {
+          type: _shared_services_items_service__WEBPACK_IMPORTED_MODULE_5__["ItemsService"]
+        }, {
+          type: _ionic_angular__WEBPACK_IMPORTED_MODULE_7__["ModalController"]
+        }, {
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"]
+        }, {
+          type: _ionic_angular__WEBPACK_IMPORTED_MODULE_7__["Platform"]
+        }];
       };
 
       TimerPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
@@ -142,6 +491,26 @@
         template: _raw_loader_timer_page_html__WEBPACK_IMPORTED_MODULE_1__["default"],
         styles: [_timer_page_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
       })], TimerPage);
+      /***/
+    },
+
+    /***/
+    "dYf9":
+    /*!*************************************************************************************************!*\
+      !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/core/modals/timer-end/timer-end.page.html ***!
+      \*************************************************************************************************/
+
+    /*! exports provided: default */
+
+    /***/
+    function dYf9(module, __webpack_exports__, __webpack_require__) {
+      "use strict";
+
+      __webpack_require__.r(__webpack_exports__);
+      /* harmony default export */
+
+
+      __webpack_exports__["default"] = "<ion-content class=\"ion-padding\" class=\"ion-text-center\">\n  <img src=\"../../../../assets/img/cup.png\" alt=\"\" />\n  <h1 color=\"soterosport-darkyellow\"><strong>¡ Fin !</strong></h1>\n</ion-content>\n\n<ion-footer>\n  <ion-toolbar>\n    <ion-buttons slot=\"start\">\n      <ion-button (click)=\"closeModal()\">\n        <ion-icon slot=\"end\" name=\"close\"></ion-icon>\n        Cerrar\n      </ion-button>\n    </ion-buttons>\n  </ion-toolbar>\n</ion-footer>\n";
       /***/
     },
 
@@ -166,6 +535,110 @@
     },
 
     /***/
+    "iDyF":
+    /*!*********************************************************!*\
+      !*** ./src/app/core/modals/timer-end/timer-end.page.ts ***!
+      \*********************************************************/
+
+    /*! exports provided: TimerEndPage */
+
+    /***/
+    function iDyF(module, __webpack_exports__, __webpack_require__) {
+      "use strict";
+
+      __webpack_require__.r(__webpack_exports__);
+      /* harmony export (binding) */
+
+
+      __webpack_require__.d(__webpack_exports__, "TimerEndPage", function () {
+        return TimerEndPage;
+      });
+      /* harmony import */
+
+
+      var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+      /*! tslib */
+      "mrSG");
+      /* harmony import */
+
+
+      var _raw_loader_timer_end_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+      /*! raw-loader!./timer-end.page.html */
+      "dYf9");
+      /* harmony import */
+
+
+      var _timer_end_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+      /*! ./timer-end.page.scss */
+      "o61L");
+      /* harmony import */
+
+
+      var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+      /*! @angular/core */
+      "fXoL");
+      /* harmony import */
+
+
+      var _ionic_angular__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
+      /*! @ionic/angular */
+      "TEn/");
+
+      var TimerEndPage = /*#__PURE__*/function () {
+        function TimerEndPage(modalCtrl) {
+          _classCallCheck(this, TimerEndPage);
+
+          this.modalCtrl = modalCtrl;
+        }
+
+        _createClass(TimerEndPage, [{
+          key: "ngOnInit",
+          value: function ngOnInit() {}
+        }, {
+          key: "closeModal",
+          value: function closeModal() {
+            this.modalCtrl.dismiss();
+          }
+        }]);
+
+        return TimerEndPage;
+      }();
+
+      TimerEndPage.ctorParameters = function () {
+        return [{
+          type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["ModalController"]
+        }];
+      };
+
+      TimerEndPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
+        selector: 'app-timer-end',
+        template: _raw_loader_timer_end_page_html__WEBPACK_IMPORTED_MODULE_1__["default"],
+        styles: [_timer_end_page_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
+      })], TimerEndPage);
+      /***/
+    },
+
+    /***/
+    "o61L":
+    /*!***********************************************************!*\
+      !*** ./src/app/core/modals/timer-end/timer-end.page.scss ***!
+      \***********************************************************/
+
+    /*! exports provided: default */
+
+    /***/
+    function o61L(module, __webpack_exports__, __webpack_require__) {
+      "use strict";
+
+      __webpack_require__.r(__webpack_exports__);
+      /* harmony default export */
+
+
+      __webpack_exports__["default"] = "h1 {\n  font-size: 2.5em;\n}\n\nimg {\n  margin-top: 30px;\n  width: 200px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL3RpbWVyLWVuZC5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxnQkFBQTtBQUNGOztBQUVBO0VBQ0UsZ0JBQUE7RUFDQSxZQUFBO0FBQ0YiLCJmaWxlIjoidGltZXItZW5kLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImgxIHtcbiAgZm9udC1zaXplOiAyLjVlbTtcbn1cblxuaW1nIHtcbiAgbWFyZ2luLXRvcDogMzBweDtcbiAgd2lkdGg6IDIwMHB4O1xufVxuIl19 */";
+      /***/
+    },
+
+    /***/
     "wV7M":
     /*!****************************************************************************************!*\
       !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/core/pages/timer/timer.page.html ***!
@@ -181,7 +654,7 @@
       /* harmony default export */
 
 
-      __webpack_exports__["default"] = "<ion-title color=\"warning\">TIMER EN CONSTRUCCION</ion-title>";
+      __webpack_exports__["default"] = "<ion-header>\n    <ion-header class=\"ion-no-border\">\n        <ion-toolbar class=\"ion-text-center\">\n            <!-- Menu -->\n            <ion-buttons slot=\"start\">\n                <ion-menu-button autoHide=\"false\" menu=\"first\"></ion-menu-button>\n            </ion-buttons>\n            <!-- Título -->\n            <ion-title>{{item.title}}</ion-title>\n\n            <!-- Icono info -->\n            <ion-buttons slot=\"end\">\n                <ion-button>\n                    <ion-icon name=\"information-circle-outline\" slot=\"icon-only\"></ion-icon>\n                </ion-button>\n            </ion-buttons>\n        </ion-toolbar>\n    </ion-header>\n</ion-header>\n\n<ion-content class=\"ion-text-center\">\n    <h3>{{displayStage}}</h3>\n\n    <ion-grid fixed>\n        <ion-row>\n            <ion-col class=\"ion-text-center\">\n                <svg id=\"progress-circle\" width=\"40vh\" height=\"40vh\" viewBox=\"0 0 175 175\">\n          <linearGradient id=\"linearColors1\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n            <stop\n              *ngIf=\"displayColor === 'restOut'\"\n              offset=\"0%\"\n              stop-color=\"#4DD3E3\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'restOut'\"\n              offset=\"100%\"\n              stop-color=\"#7DCFFF\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'Ex'\"\n              offset=\"0%\"\n              stop-color=\"#ff9368\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'Ex'\"\n              offset=\"100%\"\n              stop-color=\"#FF412C\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'Rest'\"\n              offset=\"0%\"\n              stop-color=\"#A4FCE5\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'Rest'\"\n              offset=\"100%\"\n              stop-color=\"#85FF8B\"\n            ></stop>\n          </linearGradient>\n          <circle\n            cx=\"50%\"\n            cy=\"50%\"\n            [attr.r]=\"circleR\"\n            fill=\"none\"\n            stroke=\"#34343C\"\n            stroke-width=\"14\"\n          />\n          <circle\n            cx=\"50%\"\n            cy=\"50%\"\n            [attr.r]=\"circleR\"\n            fill=\"none\"\n            stroke=\"#121213\"\n            stroke-width=\"12\"\n          />\n          <circle\n            cx=\"50%\"\n            cy=\"50%\"\n            [attr.r]=\"circleR\"\n            fill=\"none\"\n            stroke=\"url(#linearColors1)\"\n            stroke-width=\"9\"\n            stroke-linecap=\"round\"\n            [attr.stroke-dasharray]=\"circleDasharray\"\n            [attr.stroke-dashoffset]=\"percentageOffset(percent | async)\"\n          />\n          <text x=\"50%\" y=\"57%\" class=\"timer-text\">{{ time | async }}</text>\n        </svg>\n            </ion-col>\n        </ion-row>\n    </ion-grid>\n    <ion-card class=\"ion-padding\">\n        <ion-item>\n            <ion-label>\n                <h2>Descripción</h2>\n                <p>{{item.description}}</p>\n            </ion-label>\n        </ion-item>\n    </ion-card>\n</ion-content>\n\n<ion-footer class=\"ion-padding\">\n    <ion-toolbar>\n        <ion-button *ngIf=\"state === 'stop'\" (click)=\"startPreparation(this.preparation)\" color=\"soterosport-blue\" expand=\"block\">\n            <ion-icon color=\"soterosport-darkcream\" name=\"play\"></ion-icon>\n        </ion-button>\n\n        <ion-button *ngIf=\"state === 'start'\" (click)=\"stopTimer()\" color=\"soterosport-red\" expand=\"block\">\n            <ion-icon *ngIf=\"state === 'start'\" color=\"soterosport-darkcream\" name=\"stop\"></ion-icon>\n        </ion-button>\n\n        <!-- (click)=\"startTimer()\" -->\n        <!-- *ngIf=\"state === 'stop'\" -->\n        <!-- *ngIf=\"state === 'start'\"  -->\n        <!-- (click)=\"stopTimer()\" -->\n    </ion-toolbar>\n</ion-footer>";
       /***/
     },
 
@@ -372,7 +845,7 @@
         _createClass(CountdownTimer, [{
           key: "start",
           value: function start() {
-            var _this = this;
+            var _this6 = this;
 
             if (this.ing === true) {
               return;
@@ -381,13 +854,13 @@
             this.ing = true;
             this.nextTime = +new Date();
             this.ngZone.runOutsideAngular(function () {
-              _this.process();
+              _this6.process();
             });
           }
         }, {
           key: "process",
           value: function process() {
-            var _this2 = this;
+            var _this7 = this;
 
             while (this.commands.length) {
               this.commands.shift()();
@@ -422,36 +895,36 @@
             }
 
             setTimeout(function () {
-              return _this2.process();
+              return _this7.process();
             }, diff);
           }
         }, {
           key: "add",
           value: function add(fn, frequency) {
-            var _this3 = this;
+            var _this8 = this;
 
             this.commands.push(function () {
-              _this3.fns.push(fn);
+              _this8.fns.push(fn);
 
-              _this3.fns.push(frequency === 1000 ? 1 : 0);
+              _this8.fns.push(frequency === 1000 ? 1 : 0);
 
-              _this3.ing = true;
+              _this8.ing = true;
             });
             return this;
           }
         }, {
           key: "remove",
           value: function remove(fn) {
-            var _this4 = this;
+            var _this9 = this;
 
             this.commands.push(function () {
-              var i = _this4.fns.indexOf(fn);
+              var i = _this9.fns.indexOf(fn);
 
               if (i !== -1) {
-                _this4.fns.splice(i, 2);
+                _this9.fns.splice(i, 2);
               }
 
-              _this4.ing = _this4.fns.length > 0;
+              _this9.ing = _this9.fns.length > 0;
             });
             return this;
           }
@@ -487,7 +960,7 @@
 
 
       var CountdownGlobalConfig = function CountdownGlobalConfig(locale) {
-        var _this5 = this;
+        var _this10 = this;
 
         _classCallCheck(this, CountdownGlobalConfig);
 
@@ -501,7 +974,7 @@
           var date = _ref.date,
               formatStr = _ref.formatStr,
               timezone = _ref.timezone;
-          return Object(_angular_common__WEBPACK_IMPORTED_MODULE_1__["formatDate"])(new Date(date), formatStr, _this5.locale, timezone || _this5.timezone || '+0000');
+          return Object(_angular_common__WEBPACK_IMPORTED_MODULE_1__["formatDate"])(new Date(date), formatStr, _this10.locale, timezone || _this10.timezone || '+0000');
         };
       };
 
@@ -654,7 +1127,7 @@
         }, {
           key: "init",
           value: function init() {
-            var _this6 = this;
+            var _this11 = this;
 
             var locale = this.locale,
                 defCog = this.defCog;
@@ -669,7 +1142,7 @@
             this.reflow = function () {
               var count = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
               var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-              return _reflow.apply(_this6, [count, force]);
+              return _reflow.apply(_this11, [count, force]);
             };
 
             if (Array.isArray(config.notify)) {
@@ -680,7 +1153,7 @@
 
                 time = time * 1000;
                 time = time - time % frq;
-                _this6._notify[time] = true;
+                _this11._notify[time] = true;
               });
             }
 
@@ -700,7 +1173,7 @@
         }, {
           key: "reflow",
           value: function reflow() {
-            var _this7 = this;
+            var _this12 = this;
 
             var count = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
             var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
@@ -740,17 +1213,17 @@
 
             if (config.notify === 0 || _notify[value]) {
               this.ngZone.run(function () {
-                _this7.callEvent('notify');
+                _this12.callEvent('notify');
               });
             }
 
             if (value === 0) {
               this.ngZone.run(function () {
-                _this7.status = CountdownStatus.done;
+                _this12.status = CountdownStatus.done;
 
-                _this7.destroy();
+                _this12.destroy();
 
-                _this7.callEvent('done');
+                _this12.callEvent('done');
               });
             }
           }

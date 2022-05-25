@@ -281,52 +281,6 @@ module.exports = webpackAsyncContext;
 
 /***/ }),
 
-/***/ "LaX1":
-/*!******************************************************************************!*\
-  !*** ./src/app/shared/components/config-popover/config-popover.component.ts ***!
-  \******************************************************************************/
-/*! exports provided: ConfigPopoverComponent */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConfigPopoverComponent", function() { return ConfigPopoverComponent; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
-/* harmony import */ var _raw_loader_config_popover_component_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./config-popover.component.html */ "gmVC");
-/* harmony import */ var _config_popover_component_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./config-popover.component.scss */ "SvIG");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
-
-
-
-
-
-let ConfigPopoverComponent = class ConfigPopoverComponent {
-    constructor(popoverCtrl) {
-        this.popoverCtrl = popoverCtrl;
-    }
-    ngOnInit() { }
-    onClickItem(value) {
-        this.popoverCtrl.dismiss({
-            value
-        });
-    }
-};
-ConfigPopoverComponent.ctorParameters = () => [
-    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["PopoverController"] }
-];
-ConfigPopoverComponent = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
-    Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
-        selector: 'app-config-popover',
-        template: _raw_loader_config_popover_component_html__WEBPACK_IMPORTED_MODULE_1__["default"],
-        styles: [_config_popover_component_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
-    })
-], ConfigPopoverComponent);
-
-
-
-/***/ }),
-
 /***/ "P2gn":
 /*!**************************************************!*\
   !*** ./src/app/shared/services/lists.service.ts ***!
@@ -479,19 +433,6 @@ MenuComponent = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 
 /***/ }),
 
-/***/ "SvIG":
-/*!********************************************************************************!*\
-  !*** ./src/app/shared/components/config-popover/config-popover.component.scss ***!
-  \********************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjb25maWctcG9wb3Zlci5jb21wb25lbnQuc2NzcyJ9 */");
-
-/***/ }),
-
 /***/ "Sy1n":
 /*!**********************************!*\
   !*** ./src/app/app.component.ts ***!
@@ -554,8 +495,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _avatar_select_avatar_select_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./avatar-select/avatar-select.component */ "D+VW");
 /* harmony import */ var _menu_menu_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./_menu/menu.component */ "Pdnx");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _config_popover_config_popover_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./config-popover/config-popover.component */ "LaX1");
-
 
 
 
@@ -571,12 +510,10 @@ ComponentsModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
         declarations: [
             _avatar_select_avatar_select_component__WEBPACK_IMPORTED_MODULE_5__["AvatarSelectComponent"],
             _menu_menu_component__WEBPACK_IMPORTED_MODULE_6__["MenuComponent"],
-            _config_popover_config_popover_component__WEBPACK_IMPORTED_MODULE_8__["ConfigPopoverComponent"]
         ],
         exports: [
             _avatar_select_avatar_select_component__WEBPACK_IMPORTED_MODULE_5__["AvatarSelectComponent"],
             _menu_menu_component__WEBPACK_IMPORTED_MODULE_6__["MenuComponent"],
-            _config_popover_config_popover_component__WEBPACK_IMPORTED_MODULE_8__["ConfigPopoverComponent"]
         ],
         imports: [
             _angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"],
@@ -652,19 +589,6 @@ AppModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 ], AppModule);
 
 
-
-/***/ }),
-
-/***/ "gmVC":
-/*!**********************************************************************************************************************!*\
-  !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/shared/components/config-popover/config-popover.component.html ***!
-  \**********************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-list class=\"ion-padding\">\n  <ion-item (click)=\"onClickItem(1)\">\n    <ion-label>Mute</ion-label>\n  </ion-item>\n  <ion-item (click)=\"onClickItem(2)\">\n    <ion-label>Solo dígitos</ion-label>\n  </ion-item>\n  <ion-item (click)=\"onClickItem(3)\">\n    <ion-label>Ocultar caracteristicas</ion-label>\n  </ion-item>\n</ion-list>\n");
 
 /***/ }),
 
@@ -1247,7 +1171,7 @@ const routes = [
         loadChildren: () => __webpack_require__.e(/*! import() | core-pages-tabs-tabs-module */ "core-pages-tabs-tabs-module").then(__webpack_require__.bind(null, /*! ./core/pages/tabs/tabs.module */ "dl94")).then(m => m.TabsPageModule),
         canLoad: [_shared_guards_user_guard__WEBPACK_IMPORTED_MODULE_3__["UserGuard"]]
     },
-    // Añadir items
+    // Añadir listas
     {
         path: 'add/:listId',
         loadChildren: () => Promise.all(/*! import() | core-pages-add-edit-add-edit-module */[__webpack_require__.e("common"), __webpack_require__.e("core-pages-add-edit-add-edit-module")]).then(__webpack_require__.bind(null, /*! ./core/pages/add-edit/add-edit.module */ "O4fp")).then((m) => m.AddEditPageModule),
@@ -1260,7 +1184,7 @@ const routes = [
     // Timer
     {
         path: 'timer/:itemId',
-        loadChildren: () => __webpack_require__.e(/*! import() | core-pages-timer-timer-module */ "core-pages-timer-timer-module").then(__webpack_require__.bind(null, /*! ./core/pages/timer/timer.module */ "yVGo")).then(m => m.TimerPageModule)
+        loadChildren: () => Promise.all(/*! import() | core-pages-timer-timer-module */[__webpack_require__.e("common"), __webpack_require__.e("core-pages-timer-timer-module")]).then(__webpack_require__.bind(null, /*! ./core/pages/timer/timer.module */ "yVGo")).then(m => m.TimerPageModule)
     },
     {
         path: '',
@@ -1273,7 +1197,7 @@ let AppRoutingModule = class AppRoutingModule {
 AppRoutingModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
         imports: [
-            _angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterModule"].forRoot(routes, { preloadingStrategy: _angular_router__WEBPACK_IMPORTED_MODULE_2__["PreloadAllModules"] }),
+            _angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterModule"].forRoot(routes, { onSameUrlNavigation: 'reload' }),
         ],
         exports: [_angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterModule"]],
     })

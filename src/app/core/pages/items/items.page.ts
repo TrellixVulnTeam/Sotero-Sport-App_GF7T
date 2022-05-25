@@ -39,7 +39,6 @@ export class ItemsPage implements OnInit {
       .subscribe(resp => {
         console.log(resp);
         this.items.push(...resp.items);
-        // this.listTitle = resp.items[0]?.list.title // Obtengo el titulo del primer item
       });
 
     this.itemsService.newItem.subscribe(item => {
@@ -48,7 +47,6 @@ export class ItemsPage implements OnInit {
 
 
     });
-
 
   }
 
@@ -64,7 +62,7 @@ export class ItemsPage implements OnInit {
   }
 
   goToAddEdit(listId, itemId) {
-    this.router.navigateByUrl(`edit/${listId}/${itemId}`)
+    this.router.navigateByUrl(`edit/${listId}/${itemId}`);
   }
 
 
@@ -83,7 +81,7 @@ export class ItemsPage implements OnInit {
 
     const alert = await this.alertCtrl.create({
       header: 'Eliminar Item',
-      message: '¿ Está seguro que desea eliminar este item ?',
+      message: '¿Está seguro que desea eliminar este item?',
       buttons: [
         {
           text: 'Cancelar',

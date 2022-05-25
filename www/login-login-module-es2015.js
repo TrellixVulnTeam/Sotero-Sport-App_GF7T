@@ -84,11 +84,9 @@ let LoginPage = class LoginPage {
             if (valid) {
                 // navega a main
                 this.loading.dismiss();
-                // this.navCtrl.navigateRoot('/main/tabs/tab1', { animated: true }); // Para ir a los Posts
-                this.navCtrl.navigateRoot('/main/tabs/lists', { animated: true }); // Para ir a las listas
+                this.navCtrl.navigateRoot('/main/tabs/lists', { animated: true });
             }
             else {
-                // Mostrar alert : usuario/contraseña no correctos
                 this.loading.dismiss();
                 this.uiService.alertInfo('Email o contraseña incorrectos.');
             }

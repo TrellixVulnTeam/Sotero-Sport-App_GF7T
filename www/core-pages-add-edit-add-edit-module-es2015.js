@@ -396,8 +396,9 @@ let AddEditPage = class AddEditPage {
                 const updated = yield this.itemsService.updateItem(this.listId, this.itemId, this.item);
                 console.info(updated);
                 if (updated) {
-                    this.uiService.presentToast('Item actualizado correctamente'); // Toast con mensaje de actualizado
-                    this.route.navigateByUrl(`/main/tabs/items/${this.listId}`);
+                    this.route.navigate(['/main/tabs/items/' + this.listId]).then(() => {
+                        window.location.reload();
+                    });
                 }
                 else {
                     this.uiService.presentToast('Error al actualizar item');

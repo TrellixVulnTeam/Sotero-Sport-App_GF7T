@@ -51,21 +51,257 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _raw_loader_timer_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./timer.page.html */ "wV7M");
 /* harmony import */ var _timer_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./timer.page.scss */ "hQX6");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _capacitor_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @capacitor/core */ "gcOT");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _shared_services_items_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../shared/services/items.service */ "V8OY");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs */ "qCKp");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+/* harmony import */ var _modals_timer_end_timer_end_page__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../modals/timer-end/timer-end.page */ "iDyF");
+/* harmony import */ var _capacitor_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @capacitor/core */ "gcOT");
 
 
 
 
 
-const { App } = _capacitor_core__WEBPACK_IMPORTED_MODULE_4__["Plugins"];
+
+
+
+
+
+
+const { App } = _capacitor_core__WEBPACK_IMPORTED_MODULE_9__["Plugins"];
 const circleR = 80;
 const circleDasharray = 2 * Math.PI * circleR;
 let TimerPage = class TimerPage {
-    constructor() { }
+    constructor(popoverCtrl, itemsService, modalCtrl, actvRoute, platform) {
+        this.popoverCtrl = popoverCtrl;
+        this.itemsService = itemsService;
+        this.modalCtrl = modalCtrl;
+        this.actvRoute = actvRoute;
+        this.platform = platform;
+        this.item = {
+            title: '',
+            description: '',
+            preparation: null,
+            sets: null,
+            time: null,
+            restSets: null,
+            repeats: null,
+            restReps: null,
+            totalTime: null,
+        };
+        this.itemArray = [];
+        this.percent = new rxjs__WEBPACK_IMPORTED_MODULE_6__["BehaviorSubject"](100);
+        this.time = new rxjs__WEBPACK_IMPORTED_MODULE_6__["BehaviorSubject"]('00:00');
+        this.state = 'stop';
+        this.circleDasharray = circleDasharray;
+        this.circleR = circleR;
+        this.audio = new Audio();
+        this.displayStage = 'Preparación';
+        this.onlyDigits = false;
+        this.noFeatures = false;
+        this.mute = false;
+        this.startDuration = 1;
+        this.counterPreparation = 1;
+    }
     ngOnInit() {
+        this.itemId = this.actvRoute.snapshot.paramMap.get('itemId');
+        console.log(this.itemId + ' Entrando al timer ');
+        this.itemsService.getItemById(this.itemId)
+            .subscribe(resp => {
+            // Lo añado a un array por si hay retraso en la respuesta
+            this.itemArray.push(...resp.items);
+            const load = this.item = this.itemArray[0];
+            if (load) {
+                this.updateCountersAndDuration();
+            }
+        });
+    }
+    ngOnDestroy() {
+        clearInterval(this.interval);
+        this.time.next('00:00');
+        this.updateCountersAndDuration();
+    }
+    updateCountersAndDuration() {
+        // Duration
+        this.preparation = this.item.preparation;
+        this.timeEx = this.item.time;
+        this.restReps = this.item.restReps;
+        this.restSets = this.item.restSets;
+        // Counters
+        this.counterSets = this.item.sets;
+        this.counterTimeEx = this.item.repeats * this.counterSets;
+        this.counterRestReps = this.item.repeats - 1;
+    }
+    // Actualiza la duración
+    updateTimeDisplay(durationPercent) {
+        let minutes = this.timer / 60;
+        let seconds = this.timer % 60;
+        minutes = String('0' + Math.floor(minutes)).slice(-2);
+        seconds = String('0' + Math.floor(seconds)).slice(-2);
+        const text = minutes + ':' + seconds;
+        this.time.next(text);
+        const totalTime = this.startDuration * durationPercent;
+        const percentage = ((totalTime - this.timer) / totalTime) * 100;
+        this.percent.next(percentage);
+    }
+    // Preparación ------------------------------------------------------------------
+    startPreparation(duration) {
+        this.displayColor = 'restOut';
+        console.log('Entramos en preparación');
+        this.displayStage = 'Preparación';
+        this.state = 'start';
+        clearInterval(this.interval);
+        this.timer = duration;
+        this.durationPreparation();
+        this.interval = setInterval(() => {
+            this.durationPreparation();
+        }, 1000);
+    }
+    durationPreparation() {
+        this.updateTimeDisplay(this.preparation);
+        --this.timer;
+        if (this.timer < 2 && this.timer >= -1) {
+            this.playAudio("../../assets/audio/audio02.wav");
+        }
+        if (this.timer < -1) {
+            this.playAudio("../../assets/audio/audio04.wav");
+        }
+        //_________________________________________
+        if (this.timer < -1) {
+            this.startExercise(this.timeEx);
+        }
+    }
+    // -------------------------------------------------------------------------------
+    // Ejercicio ---------------------------------------------------------------------
+    startExercise(duration) {
+        console.log('Entramos en Ejercicio');
+        this.displayColor = 'Rest';
+        this.state = 'start';
+        this.displayStage = 'Ejercicio';
+        clearInterval(this.interval);
+        this.timer = duration;
+        this.durationExercise();
+        this.interval = setInterval(() => {
+            this.durationExercise();
+        }, 1000);
+    }
+    durationExercise() {
+        this.updateTimeDisplay(this.timeEx);
+        --this.timer;
+        if (this.timer < 2 && this.timer >= -1) {
+            this.playAudio("../../assets/audio/audio02.wav");
+        }
+        if (this.timer < -1) {
+            this.playAudio("../../assets/audio/audio05.wav");
+        }
+        if (this.timer < -1) {
+            this.counterTimeEx--;
+            this.startRestReps(this.restReps);
+            if (this.counterTimeEx === this.counterSets) {
+                this.startRestSets(this.restSets); // Empieza el descanso entre Series
+                if (this.counterSets === 1) {
+                    this.stopTimer();
+                    this.updateCountersAndDuration();
+                    this.modalEnd();
+                }
+            }
+        }
+    }
+    // -------------------------------------------------------------------------------
+    // Descanso Repeticion -----------------------------------------------------------
+    startRestReps(duration) {
+        console.log('Entramos en descanso repeticiones');
+        this.displayColor = 'Ex';
+        this.state = 'start';
+        this.displayStage = 'Descanso';
+        clearInterval(this.interval);
+        this.timer = duration;
+        this.durationRestReps();
+        this.interval = setInterval(() => {
+            this.durationRestReps();
+        }, 1000);
+    }
+    durationRestReps() {
+        this.updateTimeDisplay(this.restReps);
+        --this.timer;
+        if (this.timer < 2 && this.timer >= -1) {
+            this.playAudio("../../assets/audio/audio02.wav");
+        }
+        if (this.timer < -1) {
+            this.playAudio("../../assets/audio/audio04.wav");
+        }
+        if (this.timer < -1) {
+            this.counterRestReps--;
+            this.startExercise(this.timeEx);
+        }
+    }
+    // --------------------------------------------------------------------------------
+    // Descanso Series ----------------------------------------------------------------
+    startRestSets(duration) {
+        console.log('Entramos en descanso series');
+        this.displayColor = 'restOut';
+        this.state = 'start';
+        this.displayStage = 'Descanso Serie';
+        clearInterval(this.interval);
+        this.timer = duration;
+        this.durationRestSets();
+        this.interval = setInterval(() => {
+            this.durationRestSets();
+        }, 1000);
+    }
+    durationRestSets() {
+        this.updateTimeDisplay(this.restSets);
+        --this.timer;
+        if (this.timer < 2 && this.timer >= -1) {
+            this.playAudio("../../assets/audio/audio02.wav");
+        }
+        if (this.timer < -1) {
+            this.playAudio("../../assets/audio/audio04.wav");
+        }
+        if (this.timer < -1) {
+            this.counterSets--;
+            this.counterTimeEx++;
+            this.startExercise(this.timeEx);
+        }
+    }
+    // --------------------------------------------------------------------------------
+    // Muestra el modal de final del ejercicio
+    modalEnd() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            const modal = yield this.modalCtrl.create({
+                cssClass: 'modal-end',
+                component: _modals_timer_end_timer_end_page__WEBPACK_IMPORTED_MODULE_8__["TimerEndPage"],
+            });
+            return yield modal.present();
+        });
+    }
+    // Play audio
+    playAudio(url) {
+        let audio = new Audio();
+        audio.src = url;
+        audio.load();
+        audio.play();
+    }
+    // Porcentage
+    percentageOffset(percent) {
+        const percentFloat = percent / 100;
+        return circleDasharray * (1 - percentFloat);
+    }
+    // Stop timer
+    stopTimer() {
+        clearInterval(this.interval);
+        this.time.next('00:00');
+        this.updateCountersAndDuration();
+        this.state = 'stop';
     }
 };
-TimerPage.ctorParameters = () => [];
+TimerPage.ctorParameters = () => [
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_7__["PopoverController"] },
+    { type: _shared_services_items_service__WEBPACK_IMPORTED_MODULE_5__["ItemsService"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_7__["ModalController"] },
+    { type: _angular_router__WEBPACK_IMPORTED_MODULE_4__["ActivatedRoute"] },
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_7__["Platform"] }
+];
 TimerPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
         selector: 'app-timer',
@@ -75,6 +311,19 @@ TimerPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
 ], TimerPage);
 
 
+
+/***/ }),
+
+/***/ "dYf9":
+/*!*************************************************************************************************!*\
+  !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/core/modals/timer-end/timer-end.page.html ***!
+  \*************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-content class=\"ion-padding\" class=\"ion-text-center\">\n  <img src=\"../../../../assets/img/cup.png\" alt=\"\" />\n  <h1 color=\"soterosport-darkyellow\"><strong>¡ Fin !</strong></h1>\n</ion-content>\n\n<ion-footer>\n  <ion-toolbar>\n    <ion-buttons slot=\"start\">\n      <ion-button (click)=\"closeModal()\">\n        <ion-icon slot=\"end\" name=\"close\"></ion-icon>\n        Cerrar\n      </ion-button>\n    </ion-buttons>\n  </ion-toolbar>\n</ion-footer>\n");
 
 /***/ }),
 
@@ -91,6 +340,64 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "iDyF":
+/*!*********************************************************!*\
+  !*** ./src/app/core/modals/timer-end/timer-end.page.ts ***!
+  \*********************************************************/
+/*! exports provided: TimerEndPage */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TimerEndPage", function() { return TimerEndPage; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _raw_loader_timer_end_page_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raw-loader!./timer-end.page.html */ "dYf9");
+/* harmony import */ var _timer_end_page_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./timer-end.page.scss */ "o61L");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ionic/angular */ "TEn/");
+
+
+
+
+
+let TimerEndPage = class TimerEndPage {
+    constructor(modalCtrl) {
+        this.modalCtrl = modalCtrl;
+    }
+    ngOnInit() {
+    }
+    closeModal() {
+        this.modalCtrl.dismiss();
+    }
+};
+TimerEndPage.ctorParameters = () => [
+    { type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["ModalController"] }
+];
+TimerEndPage = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
+        selector: 'app-timer-end',
+        template: _raw_loader_timer_end_page_html__WEBPACK_IMPORTED_MODULE_1__["default"],
+        styles: [_timer_end_page_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
+    })
+], TimerEndPage);
+
+
+
+/***/ }),
+
+/***/ "o61L":
+/*!***********************************************************!*\
+  !*** ./src/app/core/modals/timer-end/timer-end.page.scss ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("h1 {\n  font-size: 2.5em;\n}\n\nimg {\n  margin-top: 30px;\n  width: 200px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL3RpbWVyLWVuZC5wYWdlLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxnQkFBQTtBQUNGOztBQUVBO0VBQ0UsZ0JBQUE7RUFDQSxZQUFBO0FBQ0YiLCJmaWxlIjoidGltZXItZW5kLnBhZ2Uuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImgxIHtcbiAgZm9udC1zaXplOiAyLjVlbTtcbn1cblxuaW1nIHtcbiAgbWFyZ2luLXRvcDogMzBweDtcbiAgd2lkdGg6IDIwMHB4O1xufVxuIl19 */");
+
+/***/ }),
+
 /***/ "wV7M":
 /*!****************************************************************************************!*\
   !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/core/pages/timer/timer.page.html ***!
@@ -100,7 +407,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<ion-title color=\"warning\">TIMER EN CONSTRUCCION</ion-title>");
+/* harmony default export */ __webpack_exports__["default"] = ("<ion-header>\n    <ion-header class=\"ion-no-border\">\n        <ion-toolbar class=\"ion-text-center\">\n            <!-- Menu -->\n            <ion-buttons slot=\"start\">\n                <ion-menu-button autoHide=\"false\" menu=\"first\"></ion-menu-button>\n            </ion-buttons>\n            <!-- Título -->\n            <ion-title>{{item.title}}</ion-title>\n\n            <!-- Icono info -->\n            <ion-buttons slot=\"end\">\n                <ion-button>\n                    <ion-icon name=\"information-circle-outline\" slot=\"icon-only\"></ion-icon>\n                </ion-button>\n            </ion-buttons>\n        </ion-toolbar>\n    </ion-header>\n</ion-header>\n\n<ion-content class=\"ion-text-center\">\n    <h3>{{displayStage}}</h3>\n\n    <ion-grid fixed>\n        <ion-row>\n            <ion-col class=\"ion-text-center\">\n                <svg id=\"progress-circle\" width=\"40vh\" height=\"40vh\" viewBox=\"0 0 175 175\">\n          <linearGradient id=\"linearColors1\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n            <stop\n              *ngIf=\"displayColor === 'restOut'\"\n              offset=\"0%\"\n              stop-color=\"#4DD3E3\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'restOut'\"\n              offset=\"100%\"\n              stop-color=\"#7DCFFF\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'Ex'\"\n              offset=\"0%\"\n              stop-color=\"#ff9368\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'Ex'\"\n              offset=\"100%\"\n              stop-color=\"#FF412C\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'Rest'\"\n              offset=\"0%\"\n              stop-color=\"#A4FCE5\"\n            ></stop>\n            <stop\n              *ngIf=\"displayColor === 'Rest'\"\n              offset=\"100%\"\n              stop-color=\"#85FF8B\"\n            ></stop>\n          </linearGradient>\n          <circle\n            cx=\"50%\"\n            cy=\"50%\"\n            [attr.r]=\"circleR\"\n            fill=\"none\"\n            stroke=\"#34343C\"\n            stroke-width=\"14\"\n          />\n          <circle\n            cx=\"50%\"\n            cy=\"50%\"\n            [attr.r]=\"circleR\"\n            fill=\"none\"\n            stroke=\"#121213\"\n            stroke-width=\"12\"\n          />\n          <circle\n            cx=\"50%\"\n            cy=\"50%\"\n            [attr.r]=\"circleR\"\n            fill=\"none\"\n            stroke=\"url(#linearColors1)\"\n            stroke-width=\"9\"\n            stroke-linecap=\"round\"\n            [attr.stroke-dasharray]=\"circleDasharray\"\n            [attr.stroke-dashoffset]=\"percentageOffset(percent | async)\"\n          />\n          <text x=\"50%\" y=\"57%\" class=\"timer-text\">{{ time | async }}</text>\n        </svg>\n            </ion-col>\n        </ion-row>\n    </ion-grid>\n    <ion-card class=\"ion-padding\">\n        <ion-item>\n            <ion-label>\n                <h2>Descripción</h2>\n                <p>{{item.description}}</p>\n            </ion-label>\n        </ion-item>\n    </ion-card>\n</ion-content>\n\n<ion-footer class=\"ion-padding\">\n    <ion-toolbar>\n        <ion-button *ngIf=\"state === 'stop'\" (click)=\"startPreparation(this.preparation)\" color=\"soterosport-blue\" expand=\"block\">\n            <ion-icon color=\"soterosport-darkcream\" name=\"play\"></ion-icon>\n        </ion-button>\n\n        <ion-button *ngIf=\"state === 'start'\" (click)=\"stopTimer()\" color=\"soterosport-red\" expand=\"block\">\n            <ion-icon *ngIf=\"state === 'start'\" color=\"soterosport-darkcream\" name=\"stop\"></ion-icon>\n        </ion-button>\n\n        <!-- (click)=\"startTimer()\" -->\n        <!-- *ngIf=\"state === 'stop'\" -->\n        <!-- *ngIf=\"state === 'start'\"  -->\n        <!-- (click)=\"stopTimer()\" -->\n    </ion-toolbar>\n</ion-footer>");
 
 /***/ }),
 

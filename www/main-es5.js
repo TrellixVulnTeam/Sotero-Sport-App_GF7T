@@ -397,92 +397,6 @@
     },
 
     /***/
-    "LaX1":
-    /*!******************************************************************************!*\
-      !*** ./src/app/shared/components/config-popover/config-popover.component.ts ***!
-      \******************************************************************************/
-
-    /*! exports provided: ConfigPopoverComponent */
-
-    /***/
-    function LaX1(module, __webpack_exports__, __webpack_require__) {
-      "use strict";
-
-      __webpack_require__.r(__webpack_exports__);
-      /* harmony export (binding) */
-
-
-      __webpack_require__.d(__webpack_exports__, "ConfigPopoverComponent", function () {
-        return ConfigPopoverComponent;
-      });
-      /* harmony import */
-
-
-      var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-      /*! tslib */
-      "mrSG");
-      /* harmony import */
-
-
-      var _raw_loader_config_popover_component_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-      /*! raw-loader!./config-popover.component.html */
-      "gmVC");
-      /* harmony import */
-
-
-      var _config_popover_component_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-      /*! ./config-popover.component.scss */
-      "SvIG");
-      /* harmony import */
-
-
-      var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
-      /*! @angular/core */
-      "fXoL");
-      /* harmony import */
-
-
-      var _ionic_angular__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(
-      /*! @ionic/angular */
-      "TEn/");
-
-      var ConfigPopoverComponent = /*#__PURE__*/function () {
-        function ConfigPopoverComponent(popoverCtrl) {
-          _classCallCheck(this, ConfigPopoverComponent);
-
-          this.popoverCtrl = popoverCtrl;
-        }
-
-        _createClass(ConfigPopoverComponent, [{
-          key: "ngOnInit",
-          value: function ngOnInit() {}
-        }, {
-          key: "onClickItem",
-          value: function onClickItem(value) {
-            this.popoverCtrl.dismiss({
-              value: value
-            });
-          }
-        }]);
-
-        return ConfigPopoverComponent;
-      }();
-
-      ConfigPopoverComponent.ctorParameters = function () {
-        return [{
-          type: _ionic_angular__WEBPACK_IMPORTED_MODULE_4__["PopoverController"]
-        }];
-      };
-
-      ConfigPopoverComponent = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([Object(_angular_core__WEBPACK_IMPORTED_MODULE_3__["Component"])({
-        selector: 'app-config-popover',
-        template: _raw_loader_config_popover_component_html__WEBPACK_IMPORTED_MODULE_1__["default"],
-        styles: [_config_popover_component_scss__WEBPACK_IMPORTED_MODULE_2__["default"]]
-      })], ConfigPopoverComponent);
-      /***/
-    },
-
-    /***/
     "P2gn":
     /*!**************************************************!*\
       !*** ./src/app/shared/services/lists.service.ts ***!
@@ -736,26 +650,6 @@
     },
 
     /***/
-    "SvIG":
-    /*!********************************************************************************!*\
-      !*** ./src/app/shared/components/config-popover/config-popover.component.scss ***!
-      \********************************************************************************/
-
-    /*! exports provided: default */
-
-    /***/
-    function SvIG(module, __webpack_exports__, __webpack_require__) {
-      "use strict";
-
-      __webpack_require__.r(__webpack_exports__);
-      /* harmony default export */
-
-
-      __webpack_exports__["default"] = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJjb25maWctcG9wb3Zlci5jb21wb25lbnQuc2NzcyJ9 */";
-      /***/
-    },
-
-    /***/
     "Sy1n":
     /*!**********************************!*\
       !*** ./src/app/app.component.ts ***!
@@ -904,20 +798,14 @@
       var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(
       /*! @angular/router */
       "tyNb");
-      /* harmony import */
-
-
-      var _config_popover_config_popover_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(
-      /*! ./config-popover/config-popover.component */
-      "LaX1");
 
       var ComponentsModule = function ComponentsModule() {
         _classCallCheck(this, ComponentsModule);
       };
 
       ComponentsModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
-        declarations: [_avatar_select_avatar_select_component__WEBPACK_IMPORTED_MODULE_5__["AvatarSelectComponent"], _menu_menu_component__WEBPACK_IMPORTED_MODULE_6__["MenuComponent"], _config_popover_config_popover_component__WEBPACK_IMPORTED_MODULE_8__["ConfigPopoverComponent"]],
-        exports: [_avatar_select_avatar_select_component__WEBPACK_IMPORTED_MODULE_5__["AvatarSelectComponent"], _menu_menu_component__WEBPACK_IMPORTED_MODULE_6__["MenuComponent"], _config_popover_config_popover_component__WEBPACK_IMPORTED_MODULE_8__["ConfigPopoverComponent"]],
+        declarations: [_avatar_select_avatar_select_component__WEBPACK_IMPORTED_MODULE_5__["AvatarSelectComponent"], _menu_menu_component__WEBPACK_IMPORTED_MODULE_6__["MenuComponent"]],
+        exports: [_avatar_select_avatar_select_component__WEBPACK_IMPORTED_MODULE_5__["AvatarSelectComponent"], _menu_menu_component__WEBPACK_IMPORTED_MODULE_6__["MenuComponent"]],
         imports: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _ionic_angular__WEBPACK_IMPORTED_MODULE_3__["IonicModule"], _pipes_pipes_module__WEBPACK_IMPORTED_MODULE_4__["PipesModule"], _angular_router__WEBPACK_IMPORTED_MODULE_7__["RouterModule"]]
       })], ComponentsModule);
       /***/
@@ -1032,26 +920,6 @@
         }],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_6__["AppComponent"]]
       })], AppModule);
-      /***/
-    },
-
-    /***/
-    "gmVC":
-    /*!**********************************************************************************************************************!*\
-      !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/shared/components/config-popover/config-popover.component.html ***!
-      \**********************************************************************************************************************/
-
-    /*! exports provided: default */
-
-    /***/
-    function gmVC(module, __webpack_exports__, __webpack_require__) {
-      "use strict";
-
-      __webpack_require__.r(__webpack_exports__);
-      /* harmony default export */
-
-
-      __webpack_exports__["default"] = "<ion-list class=\"ion-padding\">\n  <ion-item (click)=\"onClickItem(1)\">\n    <ion-label>Mute</ion-label>\n  </ion-item>\n  <ion-item (click)=\"onClickItem(2)\">\n    <ion-label>Solo dígitos</ion-label>\n  </ion-item>\n  <ion-item (click)=\"onClickItem(3)\">\n    <ion-label>Ocultar caracteristicas</ion-label>\n  </ion-item>\n</ion-list>\n";
       /***/
     },
 
@@ -1814,7 +1682,7 @@
           });
         },
         canLoad: [_shared_guards_user_guard__WEBPACK_IMPORTED_MODULE_3__["UserGuard"]]
-      }, // Añadir items
+      }, // Añadir listas
       {
         path: 'add/:listId',
         loadChildren: function loadChildren() {
@@ -1842,9 +1710,9 @@
       {
         path: 'timer/:itemId',
         loadChildren: function loadChildren() {
-          return __webpack_require__.e(
+          return Promise.all(
           /*! import() | core-pages-timer-timer-module */
-          "core-pages-timer-timer-module").then(__webpack_require__.bind(null,
+          [__webpack_require__.e("common"), __webpack_require__.e("core-pages-timer-timer-module")]).then(__webpack_require__.bind(null,
           /*! ./core/pages/timer/timer.module */
           "yVGo")).then(function (m) {
             return m.TimerPageModule;
@@ -1862,7 +1730,7 @@
 
       AppRoutingModule = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
         imports: [_angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterModule"].forRoot(routes, {
-          preloadingStrategy: _angular_router__WEBPACK_IMPORTED_MODULE_2__["PreloadAllModules"]
+          onSameUrlNavigation: 'reload'
         })],
         exports: [_angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterModule"]]
       })], AppRoutingModule);

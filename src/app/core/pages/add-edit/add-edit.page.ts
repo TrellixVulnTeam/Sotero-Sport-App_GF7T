@@ -4,8 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ItemsService } from '../../../shared/services/items.service';
 import { NgForm } from '@angular/forms';
 import { UiService } from '../../../shared/services/ui.service';
-import { PickerController } from '@ionic/angular';
-import { PickerOptions } from '@ionic/core'
 import { IItem } from '../../../shared/interfaces/interfaces';
 
 
@@ -21,6 +19,7 @@ export class AddEditPage implements OnInit, OnDestroy {
   list: IList;
   listId: string;
   itemId: string;
+  listTitle: String
 
   buttonStatus: string;
   buttonType: string;
@@ -73,6 +72,7 @@ export class AddEditPage implements OnInit, OnDestroy {
 
     this.listId = this.actvdRoute.snapshot.paramMap.get('listId');
     this.itemId = this.actvdRoute.snapshot.paramMap.get('itemId');
+
 
     if (this.itemId !== null) {
       this.buttonStatus = 'update'
@@ -313,8 +313,11 @@ export class AddEditPage implements OnInit, OnDestroy {
       console.info(updated);
 
       if (updated) {
-        this.uiService.presentToast('Item actualizado correctamente')// Toast con mensaje de actualizado
-        this.route.navigateByUrl(`/main/tabs/items/${this.listId}`);
+        this.route.navigate(['/main/tabs/items/'+this.listId]).then(() => {
+          window.location.reload();
+
+  });
+
       } else {
         this.uiService.presentToast('Error al actualizar item')
       }

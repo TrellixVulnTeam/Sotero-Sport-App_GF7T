@@ -560,9 +560,9 @@
                       console.info(updated);
 
                       if (updated) {
-                        this.uiService.presentToast('Item actualizado correctamente'); // Toast con mensaje de actualizado
-
-                        this.route.navigateByUrl("/main/tabs/items/".concat(this.listId));
+                        this.route.navigate(['/main/tabs/items/' + this.listId]).then(function () {
+                          window.location.reload();
+                        });
                       } else {
                         this.uiService.presentToast('Error al actualizar item');
                       }
